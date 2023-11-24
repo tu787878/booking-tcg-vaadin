@@ -9,10 +9,12 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import de.tcg.booking.views.MainLayout;
+import jakarta.annotation.security.PermitAll;
 
 @PageTitle("Dashboard")
-@Route(value = "hello", layout = MainLayout.class)
+@Route(value = "dashboard", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
+@PermitAll
 public class DashboardView extends HorizontalLayout {
 
     private TextField name;

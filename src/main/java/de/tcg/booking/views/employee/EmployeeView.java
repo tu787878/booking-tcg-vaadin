@@ -8,9 +8,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 import de.tcg.booking.views.MainLayout;
+import jakarta.annotation.security.PermitAll;
 
 @PageTitle("Employee")
 @Route(value = "employee", layout = MainLayout.class)
+@PermitAll
 public class EmployeeView extends VerticalLayout {
 
     public EmployeeView() {

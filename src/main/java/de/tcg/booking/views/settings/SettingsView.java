@@ -8,12 +8,16 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 import de.tcg.booking.views.MainLayout;
+import jakarta.annotation.security.PermitAll;
 
 @PageTitle("Settings")
 @Route(value = "setting", layout = MainLayout.class)
+@PermitAll
 public class SettingsView extends VerticalLayout {
 
-    public SettingsView() {
+    private static final long serialVersionUID = 1L;
+
+	public SettingsView() {
         setSpacing(false);
 
         Image img = new Image("images/empty-plant.png", "placeholder plant");
