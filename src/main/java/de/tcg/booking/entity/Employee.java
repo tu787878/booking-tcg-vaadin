@@ -2,7 +2,9 @@ package de.tcg.booking.entity;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,31 +17,28 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "employee")
 public class Employee {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@ManyToMany
-	@JoinTable(
-	  name = "employee_service", 
-	  joinColumns = @JoinColumn(name = "employee_id"), 
-	  inverseJoinColumns = @JoinColumn(name = "service_id"))
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "employee_service", joinColumns = @JoinColumn(name = "employee_id"), inverseJoinColumns = @JoinColumn(name = "service_id"))
 	private List<Service> doServices;
-	
-    @OneToMany
-    private List<Day> workingDays;
-	
+
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<TimeSection> workingDays;
+
 	private String name;
-	
+
 	private int age;
-	
+
 	private String colorHex;
-	
+
 	private String textColorHex;
-	
+
 	private String email;
-	
+
 	private boolean isEnable;
 
 	public Long getId() {
@@ -104,6 +103,21 @@ public class Employee {
 
 	public void setEnable(boolean isEnable) {
 		this.isEnable = isEnable;
+	}
+
+	@Override
+	public String toString() {
+		return "Employee [id=" + id + ", doServices=" + doServices + ", workingDays=" + workingDays + ", name=" + name
+				+ ", age=" + age + ", colorHex=" + colorHex + ", textColorHex=" + textColorHex + ", email=" + email
+				+ ", isEnable=" + isEnable + "]";
+	}
+
+	public List<TimeSection> getWorkingDays() {
+		return workingDays;
+	}
+
+	public void setWorkingDays(List<TimeSection> workingDays) {
+		this.workingDays = workingDays;
 	}
 
 }

@@ -9,8 +9,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "service_variant")
-public class ServiceVariant {
+@Table(name = "variant")
+public class ServiceVariant{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +22,9 @@ public class ServiceVariant {
 	
 	private String name;
 	
-	private String price;
+	private float price;
+	
+	private int time;
 	
 	private String description;
 	
@@ -46,11 +48,11 @@ public class ServiceVariant {
 		this.name = name;
 	}
 
-	public String getPrice() {
+	public float getPrice() {
 		return price;
 	}
 
-	public void setPrice(String price) {
+	public void setPrice(float price) {
 		this.price = price;
 	}
 
@@ -60,6 +62,14 @@ public class ServiceVariant {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public int getTime() {
+		return time;
+	}
+
+	public void setTime(int time) {
+		this.time = time;
 	}
 
 	public boolean isEnable() {
@@ -80,6 +90,12 @@ public class ServiceVariant {
 
 	public void setService(Service service) {
 		this.service = service;
+	}
+
+	@Override
+	public String toString() {
+		return "ServiceVariant [id=" + id + ", service=" + service + ", name=" + name + ", price=" + price + ", time="
+				+ time + ", description=" + description + ", isEnable=" + isEnable + ", position=" + position + "]";
 	}
 
 }

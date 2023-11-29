@@ -1,6 +1,6 @@
 package de.tcg.booking.entity;
 
-import java.util.List;
+import java.io.Serializable;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,12 +8,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "category")
-public class Category {
+public class Category implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +22,8 @@ public class Category {
     @JoinColumn(name="parent_category_id", nullable=false)
     private ParentCategory parentCategory;
     
-	@OneToMany(mappedBy="category")
-    private List<Service> services;
+//	@OneToMany(mappedBy="category", fetch = FetchType.EAGER)
+//    private Set<Service> services;
 	
 	private String name;
 	
@@ -79,12 +78,16 @@ public class Category {
 		this.parentCategory = parentCategory;
 	}
 
-	public List<Service> getServices() {
-		return services;
-	}
+//	public Set<Service> getServices() {
+//		return services;
+//	}
+//
+//	public void setServices(Set<Service> services) {
+//		this.services = services;
+//	}
 
-	public void setServices(List<Service> services) {
-		this.services = services;
+	public ParentCategory getParentCategory() {
+		return parentCategory;
 	}
 	
 }

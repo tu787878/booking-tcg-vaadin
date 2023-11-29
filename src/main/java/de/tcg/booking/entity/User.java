@@ -19,7 +19,7 @@ public class User {
 
 	private String username;
 	private String password;
-	private String role;
+	private Role role;
 	private boolean enabled;
 	
 	@OneToOne
@@ -49,11 +49,11 @@ public class User {
 		this.password = password;
 	}
 
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 

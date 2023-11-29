@@ -33,7 +33,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			// use the credentials
 			// and authenticate against the third-party system
 			return new UsernamePasswordAuthenticationToken(name, password,
-					Arrays.asList(new SimpleGrantedAuthority(optional.get().getRole())));
+					Arrays.asList(new SimpleGrantedAuthority(optional.get().getRole().toString())));
 		} else {
 			return null;
 		}

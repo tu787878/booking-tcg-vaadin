@@ -1,12 +1,20 @@
 package de.tcg.booking.views.employee;
 
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Paragraph;
+import java.util.List;
+
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
+
+import de.tcg.booking.entity.Employee;
+import de.tcg.booking.service.EmployeeService;
 import de.tcg.booking.views.MainLayout;
 import jakarta.annotation.security.PermitAll;
 
@@ -14,23 +22,42 @@ import jakarta.annotation.security.PermitAll;
 @Route(value = "employee", layout = MainLayout.class)
 @PermitAll
 public class EmployeeView extends VerticalLayout {
+	private static final long serialVersionUID = 1L;
 
-    public EmployeeView() {
-        setSpacing(false);
+	private Tabs m_tabs = new Tabs();
 
-        Image img = new Image("images/empty-plant.png", "placeholder plant");
-        img.setWidth("200px");
-        add(img);
+	private HorizontalLayout m_content = new HorizontalLayout();
 
-        H2 header = new H2("This place intentionally left empty");
-        header.addClassNames(Margin.Top.XLARGE, Margin.Bottom.MEDIUM);
-        add(header);
-        add(new Paragraph("It’s a place where you can grow your own UI 🤗"));
+	private final EmployeeService m_employeeService;
+	
+	List<Employee> m_employees;
 
-        setSizeFull();
-        setJustifyContentMode(JustifyContentMode.CENTER);
-        setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-        getStyle().set("text-align", "center");
-    }
+	public EmployeeView(EmployeeService employeeService) {
+		m_employeeService = employeeService;
+		m_tabs.setOrientation(Tabs.Orientation.VERTICAL);
+		m_tabs.setHeightFull();
+		m_tabs.setWidth("240px");
+		m_tabs.addSelectedChangeListener(e -> buildLayout(m_tabs.getSelectedIndex()));
+		setSpacing(false);
+		setSizeFull();
+		Button plusButton = new Button(new Icon(VaadinIcon.PLUS));
+		plusButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_PRIMARY);
+		plusButton.setAriaLabel("Add new");
+		add(plusButton, m_content);
+		m_content.setSizeFull();
+		m_employees =  m_employeeService.findAll();
+		for (Employee employee : m_employees) {
+			Tab e = new Tab();
+			e.setLabel(employee.getName());
+			m_tabs.add(e);
+		}
+		buildLayout(0);
+	}
 
+	private void buildLayout(int index) {
+		m_content.removeAll();
+		if(m_employees.isEmpty()) return;
+		m_content.add(m_tabs, new EmployeeDetails(m_employeeService, m_employees.get(index)));
+	}
+	
 }

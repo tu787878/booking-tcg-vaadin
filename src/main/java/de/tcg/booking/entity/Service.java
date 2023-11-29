@@ -1,8 +1,11 @@
 package de.tcg.booking.entity;
 
 import java.util.List;
+import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,11 +27,11 @@ public class Service {
     @JoinColumn(name="category_id", nullable=false)
     private Category category;
 	
-	@OneToMany(mappedBy="service")
+	@OneToMany(mappedBy="service", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ServiceVariant> variants;
 	
 	@ManyToMany(mappedBy = "doServices")
-	List<Employee> employee;
+	Set<Employee> employee;
 	
 	private String name;
 	
@@ -82,11 +85,11 @@ public class Service {
 		this.time = time;
 	}
 
-	public List<Employee> getEmployee() {
+	public Set<Employee> getEmployee() {
 		return employee;
 	}
 
-	public void setEmployee(List<Employee> employee) {
+	public void setEmployee(Set<Employee> employee) {
 		this.employee = employee;
 	}
 
@@ -117,6 +120,9 @@ public class Service {
 	public void setCategory(Category category) {
 		this.category = category;
 	}
-	
+
+	public Category getCategory() {
+		return category;
+	}
 	
 }

@@ -21,7 +21,7 @@ public class Appointment {
     private Reservation reservation;
 	
     @OneToOne
-    private Day day;
+    private TimeSection day;
     
     @OneToOne
     private Employee emnployee;
@@ -45,11 +45,11 @@ public class Appointment {
 		this.reservation = reservation;
 	}
 
-	public Day getDay() {
+	public TimeSection getDay() {
 		return day;
 	}
 
-	public void setDay(Day day) {
+	public void setDay(TimeSection day) {
 		this.day = day;
 	}
 

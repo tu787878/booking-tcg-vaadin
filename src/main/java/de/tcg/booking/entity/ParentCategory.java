@@ -1,24 +1,23 @@
 package de.tcg.booking.entity;
 
-import java.util.List;
+import java.io.Serializable;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "parent_category")
-public class ParentCategory {
+public class ParentCategory implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-    @OneToMany(mappedBy="parentCategory")
-    private List<Category> categories;
+//    @OneToMany(mappedBy="parentCategory", fetch = FetchType.EAGER)
+//    private Set<Category> categories;
 	
 	private String name;
 	
@@ -62,13 +61,13 @@ public class ParentCategory {
 		this.icon = icon;
 	}
 
-	public List<Category> getCategories() {
-		return categories;
-	}
-
-	public void setCategories(List<Category> categories) {
-		this.categories = categories;
-	}
+//	public Set<Category> getCategories() {
+//		return categories;
+//	}
+//
+//	public void setCategories(Set<Category> categories) {
+//		this.categories = categories;
+//	}
 
 	public int getPosition() {
 		return position;

@@ -6,8 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -17,16 +15,16 @@ public class TimeSection {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-    @ManyToOne
-    @JoinColumn(name="day_id", nullable=false)
-    private Day day;
-	
+
 	private boolean isOff; // work or not
-	
+
 	private Date timeFrom;
-	
-	private  Date timeTo;
+
+	private Date timeTo;
+
+	private DayType type;
+
+	private boolean isRepeat;
 
 	public Long getId() {
 		return id;
@@ -34,14 +32,6 @@ public class TimeSection {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Day getDay() {
-		return day;
-	}
-
-	public void setDay(Day day) {
-		this.day = day;
 	}
 
 	public boolean isOff() {
@@ -66,6 +56,22 @@ public class TimeSection {
 
 	public void setTimeTo(Date timeTo) {
 		this.timeTo = timeTo;
+	}
+
+	public DayType getType() {
+		return type;
+	}
+
+	public void setType(DayType type) {
+		this.type = type;
+	}
+
+	public boolean isRepeat() {
+		return isRepeat;
+	}
+
+	public void setRepeat(boolean isRepeat) {
+		this.isRepeat = isRepeat;
 	}
 
 }

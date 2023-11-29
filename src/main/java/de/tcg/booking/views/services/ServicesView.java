@@ -1,7 +1,5 @@
 package de.tcg.booking.views.services;
 
-import java.util.List;
-
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
@@ -9,13 +7,13 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import de.tcg.booking.entity.Category;
-import de.tcg.booking.entity.ParentCategory;
-import de.tcg.booking.entity.Service;
 import de.tcg.booking.service.CategoryService;
 import de.tcg.booking.service.ParentCategoryService;
 import de.tcg.booking.service.ServiceService;
 import de.tcg.booking.views.MainLayout;
+import de.tcg.booking.views.grid.CategoryGrid;
+import de.tcg.booking.views.grid.ParentCategoryGrid;
+import de.tcg.booking.views.grid.ServiceGrid;
 import jakarta.annotation.security.PermitAll;
 
 @PageTitle("Services")
@@ -24,10 +22,14 @@ import jakarta.annotation.security.PermitAll;
 public class ServicesView extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
-	private final Tab m_parentCategory;
-	private final Tab m_category;
-	private final Tab m_service;
-	private final VerticalLayout m_content;
+	private Tab m_parentCategory;
+	private Tab m_category;
+	private Tab m_service;
+	private VerticalLayout m_content;
+	private Span m_parentCount;
+	private Span m_categoryCount;
+	private Span m_serviceCount;
+	private Tabs m_tabs;
 
 	private final ParentCategoryService m_parentCategoryService;
 	private final CategoryService m_categoryService;
@@ -42,23 +44,24 @@ public class ServicesView extends VerticalLayout {
 		setSpacing(false);
 
 //        Image img = new Image("images/empty-plant.png", "placeholder plant");
-		
-		List<ParentCategory> parentCategories = m_parentCategoryService.findAll();
-		List<Category> categories = m_categoryService.findAll();
-		List<Service> services = m_serviceService.findAll();
 
-		m_parentCategory = new Tab(new Span("Parent categories"), createBadge(parentCategories.size()));
-		m_category = new Tab(new Span("Categories"), createBadge(categories.size()));
-		m_service = new Tab(new Span("Services"), createBadge(services.size()));
+		m_parentCount = createBadge(0);
+		m_categoryCount = createBadge(0);
+		m_serviceCount = createBadge(0);
 
-		Tabs tabs = new Tabs(m_parentCategory, m_category, m_service);
-		tabs.addSelectedChangeListener(event -> setContent(event.getSelectedTab()));
+		m_parentCategory = new Tab(new Span("Parent categories"), m_parentCount);
+		m_category = new Tab(new Span("Categories"), m_categoryCount);
+		m_service = new Tab(new Span("Services"), m_serviceCount);
+
+		m_tabs = new Tabs(m_parentCategory, m_category, m_service);
+		m_tabs.addSelectedChangeListener(event -> setContent(event.getSelectedTab()));
 
 		m_content = new VerticalLayout();
 		m_content.setSpacing(false);
-		setContent(tabs.getSelectedTab());
+		m_content.setSizeFull();
+		setContent(m_tabs.getSelectedTab());
 
-		add(tabs, m_content);
+		add(m_tabs, m_content);
 		setSizeFull();
 	}
 
@@ -70,6 +73,10 @@ public class ServicesView extends VerticalLayout {
 	}
 
 	private void setContent(Tab tab) {
+		m_parentCount.setText(String.valueOf(m_parentCategoryService.count()));
+		m_categoryCount.setText(String.valueOf(m_categoryService.count()));
+		m_serviceCount.setText(String.valueOf(m_serviceService.count()));
+
 		m_content.removeAll();
 
 		if (tab.equals(m_parentCategory)) {
@@ -82,14 +89,17 @@ public class ServicesView extends VerticalLayout {
 	}
 
 	private void buildParentCategoryContent() {
-		List<ParentCategory> parentCategories = m_parentCategoryService.findAll();
+		ParentCategoryGrid grid = new ParentCategoryGrid(m_parentCategoryService);
+		m_content.add(grid.getAddButton(), grid.getGrid());
 	}
 
 	private void buildCategoryContent() {
-		List<Category> categories = m_categoryService.findAll();
+		CategoryGrid grid = new CategoryGrid(m_categoryService);
+		m_content.add(grid.getAddButton(), grid.getGrid());
 	}
 
 	private void buildServiceContent() {
-		List<Service> services = m_serviceService.findAll();
+		ServiceGrid grid = new ServiceGrid(m_serviceService);
+		m_content.add(grid.getAddButton(), grid.getGrid());
 	}
 }
