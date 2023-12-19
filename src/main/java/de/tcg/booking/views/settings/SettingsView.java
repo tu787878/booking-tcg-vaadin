@@ -11,7 +11,7 @@ import de.tcg.booking.views.MainLayout;
 import jakarta.annotation.security.PermitAll;
 
 @PageTitle("Settings")
-@Route(value = "setting", layout = MainLayout.class)
+@Route(value = "admin/settings", layout = MainLayout.class)
 @PermitAll
 public class SettingsView extends VerticalLayout {
 

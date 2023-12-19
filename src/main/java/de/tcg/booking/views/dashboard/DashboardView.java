@@ -12,7 +12,7 @@ import de.tcg.booking.views.MainLayout;
 import jakarta.annotation.security.PermitAll;
 
 @PageTitle("Dashboard")
-@Route(value = "dashboard", layout = MainLayout.class)
+@Route(value = "admin/dashboard", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
 @PermitAll
 public class DashboardView extends HorizontalLayout {

@@ -22,6 +22,7 @@ public abstract class AbstractDialog<T, S> extends Dialog {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Registration addChangeListener(ComponentEventListener<AbstractDialog.ChangeEvent> listener) {
 		return super.addListener(AbstractDialog.ChangeEvent.class, listener);
 	}

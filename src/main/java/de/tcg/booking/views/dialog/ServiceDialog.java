@@ -52,7 +52,7 @@ public class ServiceDialog extends AbstractDialog<Service, ServiceService> {
 		TextField timeField = new TextField();
 		timeField.setLabel("Time");
 
-		ComboBox<Category> iconBox = new ComboBox<>("Service");
+		ComboBox<Category> iconBox = new ComboBox<>("Category");
 		iconBox.setItems(m_service.findAllCategories());
 		iconBox.setItemLabelGenerator(Category::getName);
 

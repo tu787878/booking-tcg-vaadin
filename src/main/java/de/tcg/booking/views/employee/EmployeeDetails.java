@@ -1,12 +1,15 @@
 package de.tcg.booking.views.employee;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.vaadin.addons.tatu.ColorPicker;
+import org.vaadin.addons.tatu.ColorPicker.InputMode;
 
+import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -19,11 +22,15 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
+import com.vaadin.flow.shared.Registration;
 
+import de.tcg.booking.entity.Category;
 import de.tcg.booking.entity.DayType;
 import de.tcg.booking.entity.Employee;
+import de.tcg.booking.entity.Service;
 import de.tcg.booking.entity.TimeSection;
 import de.tcg.booking.service.EmployeeService;
+import de.tcg.booking.service.ServiceService;
 import de.tcg.booking.util.NotificationHelper;
 import de.tcg.booking.views.component.TimeSectionComponent;
 
@@ -35,12 +42,27 @@ public class EmployeeDetails extends VerticalLayout {
 	private Binder<Employee> m_binder = new Binder<>(Employee.class);
 
 	private final EmployeeService m_employeeService;
+	
+	private final ServiceService m_serviceService;
 
-	private Map<DayType, List<TimeSection>> m_mapTimes = new HashMap<>();
+	private List<TimeSectionComponent> m_timeComponents = new ArrayList<>();
+	
+	public class ChangeGeneralEvent extends ComponentEvent<EmployeeDetails> {
+		private static final long serialVersionUID = 1L;
+		
+		public ChangeGeneralEvent(EmployeeDetails source, boolean fromClient) {
+			super(source, fromClient);
+		}
+	}
+	
+	public Registration addChangeListener(ComponentEventListener<ChangeGeneralEvent> listener) {
+		return super.addListener(ChangeGeneralEvent.class, listener);
+	}
 
-	public EmployeeDetails(EmployeeService employeeService, Employee employee) {
+	public EmployeeDetails(EmployeeService employeeService, Employee employee, ServiceService serviceService) {
 		super();
 		m_employeeService = employeeService;
+		m_serviceService = serviceService;
 		m_employee = employee;
 		setSizeFull();
 		buildLayout();
@@ -49,15 +71,51 @@ public class EmployeeDetails extends VerticalLayout {
 	private void buildLayout() {
 		removeAll();
 		Details general = new Details("General information", buildGeneral());
-		general.setOpened(false);
+		general.setOpened(true);
 
 		Details time = new Details("Working time", buildTime());
-		time.setOpened(true);
+		time.setOpened(false);
 
-		Details service = new Details("Service", buildGeneral());
+		Details service = new Details("Service", buildServices());
 		service.setOpened(false);
 
 		add(general, time, service);
+	}
+	
+	private VerticalLayout buildServices() {
+		VerticalLayout layout = new VerticalLayout();
+		Map<Category, List<Service>> catServices = m_serviceService.getCatServices();
+		List<Service> employeeServices = m_employee.getDoServices();
+		Map<Checkbox, Service> checkboxes = new HashMap<>();
+		for(Category cat : catServices.keySet()) {
+			VerticalLayout layout2 = new VerticalLayout();
+			for(Service service : catServices.get(cat)){
+				Checkbox serviceCheckBox = new Checkbox(service.getName());
+				checkboxes.put(serviceCheckBox, service);
+				if(employeeServices.stream().anyMatch(e -> e.getId() == service.getId())) {
+					serviceCheckBox.setValue(true);
+				}
+				layout2.add(serviceCheckBox);
+			}
+			Details catDetails = new Details(cat.getName(), layout2);
+			catDetails.setOpened(true);
+			layout.add(catDetails); 
+		}
+		Button primaryButton = new Button("Save");
+		primaryButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		primaryButton.addClickListener(e -> {
+			List<Service> finals = new ArrayList<>();
+			for(Checkbox key : checkboxes.keySet()) {
+				if(key.getValue()) {
+					finals.add(checkboxes.get(key));
+				}
+			}
+			m_employee.setDoServices(finals);
+			m_employeeService.save(m_employee);
+			NotificationHelper.showSuccess("Services was saved successfully!");
+		});
+		layout.add(primaryButton);
+		return layout;
 	}
 
 	private VerticalLayout buildGeneral() {
@@ -70,8 +128,10 @@ public class EmployeeDetails extends VerticalLayout {
 
 		ColorPicker colorPicker = new ColorPicker();
 		colorPicker.setLabel("Color");
+		colorPicker.setInputMode(InputMode.NOCSSINPUT);
 		ColorPicker textPicker = new ColorPicker();
 		colorPicker.setLabel("Text Color");
+		textPicker.setInputMode(InputMode.NOCSSINPUT);
 
 		nameField.setWidth("300px");
 		ageField.setWidth("300px");
@@ -103,10 +163,12 @@ public class EmployeeDetails extends VerticalLayout {
 
 				m_employee = m_employeeService.save(m_employee);
 				NotificationHelper.showSuccess("General information was saved successfully!");
-				buildLayout();
+//				buildLayout();
 			} catch (Exception a) {
 				NotificationHelper.showError("Error: " + a.getMessage());
+				return;
 			}
+			fireEvent(new ChangeGeneralEvent(this, false));
 		});
 
 		layout.add(nameField, ageField, emailField, colorPicker, textPicker, checkbox, primaryButton);
@@ -119,7 +181,23 @@ public class EmployeeDetails extends VerticalLayout {
 		for (DayType type : DayType.values()) {
 			layout.add(buildDay(type));
 		}
+		
+		Button primaryButton = new Button("Save");
+		primaryButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		primaryButton.addClickListener(e -> {
+			List<TimeSection> times = new ArrayList<>();
+			for(TimeSectionComponent component : m_timeComponents) {
+				TimeSection timeSection = component.getData();
+				if(timeSection != null)
+					times.add(timeSection);
+			}
+			
+			m_employee.setWorkingDays(times);
+			m_employeeService.save(m_employee);
+			NotificationHelper.showSuccess("Working times was saved successfully!");
+		});
 
+		layout.add(primaryButton);
 		layout.setWidthFull();
 		return layout;
 	}
@@ -127,29 +205,34 @@ public class EmployeeDetails extends VerticalLayout {
 	private VerticalLayout buildDay(DayType type) {
 		VerticalLayout layout = new VerticalLayout();
 		List<TimeSection> times = getTimeBy(type);
-		m_mapTimes.put(type, times);
 		HorizontalLayout row = new HorizontalLayout();
 		H4 title = new H4(type.toString());
 		Button plusButton = new Button(new Icon(VaadinIcon.PLUS));
-		plusButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
+		plusButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_SMALL);
 		plusButton.setAriaLabel("Add new");
 		plusButton.addClickListener(e -> {
-			System.out.println("nene");
 			TimeSection temp = new TimeSection();
-			if (m_mapTimes.get(type) == null || m_mapTimes.get(type).isEmpty()) {
-				m_mapTimes.put(type, Arrays.asList(temp));
-			} else {
-				m_mapTimes.get(type).add(temp);
-			}
-
-			layout.add(new TimeSectionComponent(temp));
+			temp.setType(type);
+			TimeSectionComponent time = new TimeSectionComponent(temp);
+			m_timeComponents.add(time);
+			time.addChangeListener(a -> {
+				layout.remove(a.getSource());
+				m_timeComponents.remove(a.getSource());
+			});
+			layout.add(time);
 		});
 		row.add(title, plusButton);
 		row.setAlignItems(Alignment.CENTER);
 		layout.add(row);
 
 		for (TimeSection time : times) {
-			layout.add(new TimeSectionComponent(time));
+			TimeSectionComponent tmp = new TimeSectionComponent(time);
+			m_timeComponents.add(tmp);
+			tmp.addChangeListener(a -> {
+				layout.remove(a.getSource());
+				m_timeComponents.remove(a.getSource());
+			});
+			layout.add(tmp);
 		}
 		return layout;
 	}

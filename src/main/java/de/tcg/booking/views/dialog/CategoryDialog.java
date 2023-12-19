@@ -32,9 +32,10 @@ public class CategoryDialog extends AbstractDialog<Category, CategoryService> {
 		Checkbox checkbox = new Checkbox();
 		checkbox.setLabel("Enable");
 
-		ComboBox<ParentCategory> iconBox = new ComboBox<>("Parent");
-		iconBox.setItems(m_service.findAllParents());
-		iconBox.setItemLabelGenerator(ParentCategory::getName);
+		ComboBox<ParentCategory> parentCombo = new ComboBox<>("Parent");
+		parentCombo.setItems(m_service.findAllParents());
+		parentCombo.setItemLabelGenerator(ParentCategory::getName);
+		parentCombo.setVisible(true);
 
 		IntegerField integerField = new IntegerField();
 		integerField.setLabel("Position");
@@ -45,19 +46,15 @@ public class CategoryDialog extends AbstractDialog<Category, CategoryService> {
 		m_binder.forField(descriptionField).bind(Category::getDescription, Category::setDescription);
 		m_binder.forField(checkbox).bind(Category::isEnable, Category::setEnable);
 		m_binder.forField(integerField).bind(Category::getPosition, Category::setPosition);
-		m_binder.forField(iconBox).bind(Category::getParentCategory, Category::setParentCategory);
+		m_binder.forField(parentCombo).bind(Category::getParentCategory, Category::setParentCategory);
 
 		m_binder.readBean(m_data);
 
-		VerticalLayout dialogLayout = new VerticalLayout(nameField, iconBox, descriptionField, checkbox, integerField);
+		VerticalLayout dialogLayout = new VerticalLayout(nameField, parentCombo, descriptionField, checkbox, integerField);
 		dialogLayout.setPadding(false);
 		dialogLayout.setSpacing(false);
 		dialogLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
 		dialogLayout.setWidth("500px");
-
-		if (m_data.getId() != null) {
-			nameField.setValue(m_data.getName());
-		}
 
 		return dialogLayout;
 	}

@@ -1,6 +1,7 @@
 package de.tcg.booking.entity;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,13 +19,19 @@ public class TimeSection {
 
 	private boolean isOff; // work or not
 
-	private Date timeFrom;
+	private LocalDate dateFrom;
 
-	private Date timeTo;
+	private LocalDate dateTo;
+
+	private LocalTime timeFrom;
+
+	private LocalTime timeTo;
 
 	private DayType type;
 
 	private boolean isRepeat;
+
+	private boolean isAllDay;
 
 	public Long getId() {
 		return id;
@@ -42,19 +49,19 @@ public class TimeSection {
 		this.isOff = isOff;
 	}
 
-	public Date getTimeFrom() {
+	public LocalTime getTimeFrom() {
 		return timeFrom;
 	}
 
-	public void setTimeFrom(Date timeFrom) {
+	public void setTimeFrom(LocalTime timeFrom) {
 		this.timeFrom = timeFrom;
 	}
 
-	public Date getTimeTo() {
+	public LocalTime getTimeTo() {
 		return timeTo;
 	}
 
-	public void setTimeTo(Date timeTo) {
+	public void setTimeTo(LocalTime timeTo) {
 		this.timeTo = timeTo;
 	}
 
@@ -72,6 +79,30 @@ public class TimeSection {
 
 	public void setRepeat(boolean isRepeat) {
 		this.isRepeat = isRepeat;
+	}
+
+	public LocalDate getDateFrom() {
+		return dateFrom;
+	}
+
+	public void setDateFrom(LocalDate dateFrom) {
+		this.dateFrom = dateFrom;
+	}
+
+	public LocalDate getDateTo() {
+		return dateTo;
+	}
+
+	public void setDateTo(LocalDate dateTo) {
+		this.dateTo = dateTo;
+	}
+
+	public boolean isAllDay() {
+		return isAllDay;
+	}
+
+	public void setAllDay(boolean isAllDay) {
+		this.isAllDay = isAllDay;
 	}
 
 }

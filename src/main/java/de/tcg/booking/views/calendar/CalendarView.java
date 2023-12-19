@@ -11,7 +11,7 @@ import de.tcg.booking.views.MainLayout;
 import jakarta.annotation.security.PermitAll;
 
 @PageTitle("Calendar")
-@Route(value = "calendar", layout = MainLayout.class)
+@Route(value = "admin/calendar", layout = MainLayout.class)
 @PermitAll
 public class CalendarView extends VerticalLayout {
 

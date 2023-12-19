@@ -28,6 +28,9 @@ public class Appointment {
     
     @OneToOne
     private Service service;
+    
+    @OneToOne
+    private ServiceVariant serviceVariant; // it fine that, it can be null
 
 	public Long getId() {
 		return id;
@@ -67,6 +70,14 @@ public class Appointment {
 
 	public void setService(Service service) {
 		this.service = service;
+	}
+
+	public ServiceVariant getServiceVariant() {
+		return serviceVariant;
+	}
+
+	public void setServiceVariant(ServiceVariant serviceVariant) {
+		this.serviceVariant = serviceVariant;
 	}
     
 }

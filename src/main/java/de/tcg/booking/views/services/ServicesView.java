@@ -17,7 +17,7 @@ import de.tcg.booking.views.grid.ServiceGrid;
 import jakarta.annotation.security.PermitAll;
 
 @PageTitle("Services")
-@Route(value = "service", layout = MainLayout.class)
+@Route(value = "admin/service", layout = MainLayout.class)
 @PermitAll
 public class ServicesView extends VerticalLayout {
 
