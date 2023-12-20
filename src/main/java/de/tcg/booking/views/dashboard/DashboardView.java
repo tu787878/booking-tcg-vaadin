@@ -13,7 +13,7 @@ import jakarta.annotation.security.PermitAll;
 
 @PageTitle("Dashboard")
 @Route(value = "admin/dashboard", layout = MainLayout.class)
-@RouteAlias(value = "", layout = MainLayout.class)
+@RouteAlias(value = "admin", layout = MainLayout.class)
 @PermitAll
 public class DashboardView extends HorizontalLayout {
 
